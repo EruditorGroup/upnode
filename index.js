@@ -5,7 +5,7 @@ var EventEmitter = require('events').EventEmitter;
 
 var serverHandle = require('./lib/server_handle');
 
-var upnode = module.exports = function (cons) {
+var upnode = module.exports = function (cons, options) {
     var self = {};
     self.connect = function () {
         var args = [].slice.call(arguments);
@@ -24,7 +24,7 @@ var upnode = module.exports = function (cons) {
     names.forEach(function (name) {
         self[name] = function (buf) {
             var h = self._serverHandle;
-            if (!h) h = self._serverHandle = serverHandle(cons);
+            if (!h) h = self._serverHandle = serverHandle(cons, options);
             return h[name].apply(h, arguments);
         };
     });
@@ -36,7 +36,7 @@ var upnode = module.exports = function (cons) {
         server._ds = [];
         
         server.on('connection', function (stream) {
-            var d = serverHandle(cons);
+            var d = serverHandle(cons, options);
             d.stream = stream;
             d.pipe(stream).pipe(d);
             
@@ -156,7 +156,8 @@ function connect (up, cons) {
     var cb = opts.block || function (remote, conn) {
         conn.emit('up', remote);
     };
-    
+
+    var dnodeOptions = opts.options || {};
     if (opts.ping === undefined) opts.ping = 10000;
     if (opts.timeout === undefined) opts.timeout = 5000;
     if (opts.reconnect === undefined) opts.reconnect = 1000;
@@ -179,7 +180,7 @@ function connect (up, cons) {
         };
         
         return res;
-    });
+    },dnodeOptions);
     
     client.once('up', function (r) {
         up.remote = r;

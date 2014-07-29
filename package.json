@@ -23,7 +23,7 @@
         "test" : "tap test/*.js"
     },
     "dependencies" : {
-        "dnode" : "git://github.com/EruditorGroup/dnode.git"
+        "dnode" : "git+ssh://git@github.com/EruditorGroup/dnode.git"
     },
     "devDependencies" : {
         "tap" : "~0.2.6"
